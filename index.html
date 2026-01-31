@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Rehman Fabrics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS STYLING START --- */
+        
+        /* General Settings */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        html { scroll-behavior: smooth; }
+
+        /* Header Styles */
+        header {
+            background-color: #111;
+            color: #fff;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .logo h1 {
+            font-size: 1.6rem; margin: 0;
+            color: #d4af37; /* Gold Color */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+        nav a { text-decoration: none; color: #fff; font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
+        nav a:hover { color: #d4af37; }
+
+        .cart-icon { position: relative; cursor: pointer; font-size: 1.3rem; margin-left: 20px; }
+        #cart-count {
+            position: absolute; top: -8px; right: -12px;
+            background: #e74c3c; color: white;
+            font-size: 0.75rem; padding: 2px 6px; border-radius: 50%;
+            font-weight: bold;
+        }
+
+        /* Layout Container */
+        .main-container {
+            display: flex;
+            max-width: 1300px;
+            margin: 20px auto;
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        /* Sidebar Styling (Categories) */
+        .sidebar {
+            flex: 0 0 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+        .sidebar h3 { border-bottom: 2px solid #d4af37; padding-bottom: 10px; margin-top: 0; font-size: 1.1rem; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li {
+            padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .sidebar li:hover { background-color: #f0f0f0; color: #d4af37; padding-left: 15px; border-left: 3px solid #d4af37; }
+        .sidebar li.active-cat { background-color: #f9f9f9; color: #d4af37; font-weight: bold; border-left: 4px solid #d4af37; padding-left: 15px; }
+        .badge { background: #e74c3c; color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; }
+
+        /* Main Content Area */
+        main { flex: 1; }
+
+        /* Hero Slider */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1s ease-in-out;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+        }
+        .slide::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1; }
+        .slide.active { opacity: 1; z-index: 2; }
+
+        .hero-content { position: relative; z-index: 3; animation: slideUp 1s ease forwards; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .hero-content h2 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); }
+        .hero-content p { font-size: 1.2rem; letter-spacing: 1px; }
+
+        /* Product Grid */
+        /* FIX: Added scroll-margin-top so sticky header doesn't cover title */
+        #products { scroll-margin-top: 100px; }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08); transition: transform 0.3s ease;
+            position: relative; display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        
+        .product-img-box { height: 250px; overflow: hidden; }
+        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .product-card:hover img { transform: scale(1.05); }
+
+        .discount-tag {
+            position: absolute; top: 10px; left: 10px; background: #e74c3c; color: white;
+            padding: 5px 10px; font-size: 0.8rem; font-weight: bold; border-radius: 3px; z-index: 2;
+        }
+
+        .product-info { padding: 15px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .price { color: #d4af37; font-weight: bold; font-size: 1.2rem; }
+        .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; margin-right: 8px; }
+
+        button.add-btn {
+            background: #111; color: white; border: none; padding: 10px; width: 100%; font-size: 0.9rem;
+            cursor: pointer; border-radius: 4px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        button.add-btn:hover { background: #d4af37; }
+
+        /* About & Team Styles */
+        .about-section, .contact-section { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .contact-section { background: #111; color: white; text-align: center; }
+        
+        .team-container { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 30px; justify-content: center; }
+        .team-card { 
+            flex: 1; min-width: 250px; max-width: 350px;
+            background: #fff; padding: 25px; border-radius: 12px; 
+            text-align: center; border: 1px solid #eee;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .team-card:hover { transform: translateY(-5px); border-color: #d4af37; }
+        
+        .team-img {
+            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+            border: 3px solid #d4af37; margin-bottom: 15px; padding: 3px;
+        }
+        .team-card h4 { margin: 10px 0 5px; color: #111; font-size: 1.2rem; }
+        .team-card strong { color: #d4af37; display: block; margin-bottom: 10px; font-size: 0.95rem; letter-spacing: 1px; }
+
+        /* Footer */
+        footer { background-color: #111; color: #ccc; padding: 50px 0 20px; margin-top: 50px; border-top: 4px solid #d4af37; }
+        .footer-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; gap: 30px; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h3 { color: #fff; font-size: 1.2rem; margin-bottom: 20px; position: relative; display: inline-block; padding-bottom: 5px; }
+        .footer-col h3::after { content: ''; position: absolute; left: 0; bottom: 0; width: 50px; height: 2px; background: #d4af37; }
+        .footer-col p { line-height: 1.6; font-size: 0.95rem; }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #ccc; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: #d4af37; padding-left: 5px; }
+        .social-icons { margin-top: 15px; }
+        .social-icons a { display: inline-flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: #333; color: #fff; border-radius: 50%; margin-right: 10px; text-decoration: none; transition: 0.3s; }
+        .social-icons a:hover { background: #d4af37; color: #000; }
+        .copyright { text-align: center; border-top: 1px solid #333; margin-top: 40px; padding-top: 20px; font-size: 0.9rem; }
+
+        /* Modals & Notifications */
+        .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; backdrop-filter: blur(3px); }
+        .cart-content { background: white; width: 90%; max-width: 500px; margin: 40px auto; padding: 25px; border-radius: 8px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; color: #888; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .cart-total { margin-top: 20px; text-align: right; border-top: 2px solid #333; padding-top: 10px; }
+        .checkout-form input, .checkout-form textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
+        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 14px; width: 100%; font-size: 1rem; font-weight: bold; margin-top: 10px; cursor: pointer; border-radius: 50px; }
+
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; }
+        .success-content { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 90%; max-width: 450px; animation: popIn 0.4s ease; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .success-icon { font-size: 4rem; color: #25D366; margin-bottom: 20px; }
+        .continue-btn { background: #111; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; }
+
+        #notification-container { position: fixed; bottom: 30px; right: 30px; z-index: 4000; }
+        .notification { background: #fff; color: #333; padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; transform: translateX(100%); transition: transform 0.3s ease; min-width: 250px; border-left: 5px solid #25D366; }
+        .notification.show { transform: translateX(0); }
+        .notification.error { border-left-color: #e74c3c; }
+
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar { position: static; width: 100%; margin-bottom: 20px; }
+            nav ul { display: none; }
+            #notification-container { right: 50%; transform: translateX(50%); bottom: 20px; width: 90%; }
+            .hero-slider { height: 250px; } 
+            .hero-content h2 { font-size: 2rem; }
+            .footer-container { flex-direction: column; gap: 20px; }
+        }
+        /* --- CSS END --- */
+    </style>
+</head>
+<body>
+
+    <div id="notification-container"></div>
+
+    <header>
+        <div class="logo">
+            <h1><i class="fa-solid fa-layer-group"></i> Al-Rehman Fabrics</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Shop</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-list"></i> Categories</h3>
+            <ul id="category-list">
+                <li onclick="filterProducts('all', this)" class="active-cat">All Collection</li>
+                <li onclick="filterProducts('Men', this)">Men's Unstitched</li>
+                <li onclick="filterProducts('Women', this)">Women's Collection</li>
+                <li onclick="filterProducts('Kids', this)">Kids' Wear (6 to 12 years)</li>
+                <li onclick="filterProducts('Fancy', this)">Fancy / Party Wear</li>
+                <li onclick="filterProducts('Discount', this)">Sale / Discount <span class="badge">%</span></li>
+            </ul>
+        </aside>
+
+        <main>
+            
+            <section id="home" class="hero-slider">
+                <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');">
+                    <div class="hero-content">
+                        <h2>Al-Rehman Fabrics</h2>
+                        <p>Premium Quality & Elegant Designs</p>
+                    </div>
+                </div>
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');">
+                    <div class="hero-content">
+                        <h2>New Winter Collection</h2>
+                        <p>Warmest fabrics for the season</p>
+                    </div>
+                </div>
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');">
+                    <div class="hero-content">
+                        <h2>Flat 20% OFF</h2>
+                        <p>On Men , Kids & Ladies Wear</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="products">
+                <h2 style="text-align:center; margin-bottom:30px;" id="current-category-title">All Collection</h2>
+                <div class="product-grid" id="product-list"></div>
+            </section>
+
+            <section id="about" class="about-section">
+                <h2 style="text-align:center;">About Us</h2>
+                <p style="text-align: center; color: #555; max-width: 800px; margin: 0 auto;">
+                    Welcome to <strong>Al-Rehman Fabrics</strong>. Since 2007, we have been providing the finest quality fabrics. Our mission is to deliver elegance and durability in every thread.
+                </p>
+                <div class="team-container">
+                    <div class="team-card">
+                        <img src="https://i.ibb.co/YFFfW8m4/owner.jpg" alt="Owner" class="team-img">
+                        <h4>Sajjad Hussain</h4>
+                        <strong>Director / Owner</strong>
+                        <p style="font-size: 0.9rem; color: #666;">Visionary leader ensuring top quality for our valued customers.</p>
+                    </div>
+                    <div class="team-card">
+                        <img src="https://i.ibb.co/rRxsYC51/manager.jpg" alt="Manager" class="team-img">
+                        <h4>Muhammad Hammad Khan</h4>
+                        <strong>Manager</strong>
+                        <strong>Email: hrana2232@gmail.com</strong>
+                        <p style="font-size: 0.9rem; color: #666;">Managing daily online operations and customer satisfaction 24/7.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="contact-section">
+                <h2>Visit Our Shop</h2>
+                <p><i class="fa-solid fa-location-dot"></i> Al-Rehman Fabrics, Bhaikot, Sunder Road Raiwind Main Mosque Bilal, Lahore</p>
+                <p><i class="fa-solid fa-phone"></i> +92 333 4106762</p>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Al-Rehman Fabrics</h3>
+                <p>We offer premium quality fabrics for Men, Women, and Kids. Quality you can trust, prices you will love.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="wa.me/+92 3334106762"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Shop Collection</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact Support</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Get In Touch</h3>
+                <ul class="footer-links">
+                    <li><i class="fa-solid fa-phone" style="color:#d4af37; margin-right:8px;"></i> +92 300 4171875</li>
+                    <li><i class="fa-solid fa-phone" style="color:#d4af37; margin-right:8px;"></i> +44 7466022069</li>
+                    <li><i class="fa-solid fa-envelope" style="color:#d4af37; margin-right:8px;"></i>alrehmanfabricsbhaikot@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot" style="color:#d4af37; margin-right:8px;"></i> Bhai Kot, Raiwind</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>&copy; 2026 Al-Rehman Fabrics. All Rights Reserved. | Designed for Professionals.</p>
+        </div>
+    </footer>
+
+    <div id="cart-modal" class="cart-modal">
+        <div class="cart-content">
+            <span class="close-btn" onclick="toggleCart()">&times;</span>
+            <h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">Your Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total"><h3>Total: Rs. <span id="total-price">0</span></h3></div>
+            <div class="checkout-form">
+                <h3 style="margin-top:0;">Delivery Information</h3>
+                <input type="text" id="cust-name" placeholder="Full Name" required>
+                <input type="tel" id="cust-phone" placeholder="Phone Number" required>
+                <textarea id="cust-address" rows="3" placeholder="Address" required></textarea>
+                <button onclick="checkoutWhatsApp()" class="whatsapp-btn">
+                    <i class="fa-brands fa-whatsapp"></i> Confirm Order
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="success-modal" class="success-modal">
+        <div class="success-content">
+            <i class="fa-regular fa-circle-check success-icon"></i>
+            <h2>Order Received!</h2>
+            <p>We have received your order details on WhatsApp.</p>
+            <button class="continue-btn" onclick="closeSuccessModal()">Continue Shopping</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        
+   /* --- MANUAL PRODUCT DATA START (Total 80 Items) --- */
+
+const products = [
+    // --- MEN'S COLLECTION (20 Items) ---
+    { id: 1, name: "Men's Premium Boski", category: "Men", price: 4500, oldPrice: 5500, img: 'https://i.ibb.co/Ngr3h8pV/premium-boski.jpg' },
+    { id: 2, name: "Gents Cotton Suit White", category: "Men", price: 3000, oldPrice: null, img: 'https://i.ibb.co/C5J3fKbx/gents-cotton-white.jpg' },
+    { id: 3, name: "Wash n Wear Blue", category: "Men", price: 3800, oldPrice: 4500, img: 'https://i.ibb.co/DDR2sh4p/wash-n-wear-blue.jpg' },
+    { id: 4, name: "Karandi Suit Black", category: "Men", price: 3200, oldPrice: null, img: "https://i.ibb.co/zV3MDykH/black-karandi.jpg" },
+    { id: 5, name: "Men's Kurta Pajama", category: "Men", price: 2500, oldPrice: 3000, img: "https://i.ibb.co/mCTXFKcw/kurta.jpg" },
+    { id: 6, name: "Soft Cotton Cream", category: "Men", price: 2800, oldPrice: null, img: "https://i.ibb.co/fz84BgBK/soft-cotton-cream.jpg" },
+    { id: 7, name: "Latha Original", category: "Men", price: 4000, oldPrice: 5000, img: "https://i.ibb.co/hxxcLmX1/latha.jpg" },
+    { id: 8, name: "Men's Shawl Suit", category: "Men", price: 5500, oldPrice: null, img: "https://i.ibb.co/Wp54mH8b/shawl.jpg" },
+    { id: 9, name: "Boski Style Suit", category: "Men", price: 3000, oldPrice: 3500, img: "https://i.ibb.co/MkmrQZ6C/boski-style-suit.jpg" },
+    { id: 10, name: "Khaddar Gents", category: "Men", price: 5500, oldPrice: null, img: "https://i.ibb.co/vCDmdT8k/khaddar-gents.jpg" },
+ 
+
+    // --- WOMEN'S COLLECTION (20 Items) ---
+    { id: 21, name: "Ladies Embroidered Lawn", category: "Women", price: 2800, oldPrice: 3500, img: "https://i.ibb.co/SXmdQq43/Whats-App-Image-2026-01-31-at-11-57-54-AM.jpg" },
+    { id: 22, name: "Digital Print Kurti", category: "Women", price: 1500, oldPrice: null, img: "https://i.ibb.co/sJNF8DYg/Whats-App-Image-2026-01-31-at-11-57-54-AM-1.jpg" },
+    { id: 23, name: "Chiffon 3-Piece Suit", category: "Women", price: 4500, oldPrice: 5500, img: "https://i.ibb.co/Csw1CtPw/Whats-App-Image-2026-01-31-at-11-57-55-AM.jpg" },
+    { id: 24, name: "Women's Silk Tunic", category: "Women", price: 2200, oldPrice: null, img: "https://i.ibb.co/ZR9YStHv/Whats-App-Image-2026-01-31-at-11-57-55-AM-1.jpg" },
+    { id: 25, name: "Khaddar Winter Collection", category: "Women", price: 3000, oldPrice: 3800, img: "https://i.ibb.co/JjbP6m9Z/Whats-App-Image-2026-01-31-at-11-57-56-AM.jpg" },
+    { id: 26, name: "Linen Printed Suit", category: "Women", price: 2600, oldPrice: null, img: "https://i.ibb.co/MDMVs2PV/Whats-App-Image-2026-01-31-at-11-57-57-AM.jpg" },
+    { id: 27, name: "Fancy Net Dupatta Suit", category: "Women", price: 5000, oldPrice: 6000, img: "https://i.ibb.co/cXgsMML2/Whats-App-Image-2026-01-31-at-11-57-57-AM-1.jpg" },
+    { id: 28, name: "Casual Cotton Kurti", category: "Women", price: 1200, oldPrice: null, img: "https://i.ibb.co/vxhX1PHf/Whats-App-Image-2026-01-31-at-11-57-58-AM.jpg" },
+    { id: 29, name: "Velvet Shawl Suit", category: "Women", price: 6500, oldPrice: 8000, img: "https://i.ibb.co/RGF4sqh7/Whats-App-Image-2026-01-31-at-11-57-59-AM.jpg" },
+    { id: 30, name: "Women Cord Set", category: "Women", price: 1800, oldPrice: null, img: "https://i.ibb.co/6Jyj809M/Whats-App-Image-2026-01-31-at-11-57-59-AM-1.jpg" },
+  
+    // --- KIDS' COLLECTION (20 Items) ---
+    { id: 41, name: "Kids Kurta Shalwar White", category: "Kids", price: 1500, oldPrice: 1800, img: "https://i.ibb.co/Gf9nfQH5/Whats-App-Image-2026-01-31-at-12-56-12-PM.jpg" },
+    { id: 42, name: "Baby Boy Waistcoat Suit", category: "Kids", price: 2200, oldPrice: null, img: "https://i.ibb.co/mrmyBbxt/Whats-App-Image-2026-01-31-at-12-56-12-PM-1.jpg" },
+    { id: 43, name: "Girls Fancy Frock", category: "Kids", price: 2500, oldPrice: 3000, img: "https://i.ibb.co/ds6sY8M5/Whats-App-Image-2026-01-31-at-12-56-13-PM.jpg" },
+    { id: 44, name: "Boys Denim Jeans", category: "Kids", price: 1200, oldPrice: null, img: "https://i.ibb.co/nNw6p8gw/Whats-App-Image-2026-01-31-at-12-56-13-PM-1.jpg" },
+    { id: 45, name: "Kids T-Shirt & Shorts", category: "Kids", price: 900, oldPrice: 1200, img: "https://i.ibb.co/s9h9xw2c/Whats-App-Image-2026-01-31-at-12-56-13-PM-2.jpg" },
+    { id: 46, name: "Kids Suit Blue", category: "Kids", price: 1600, oldPrice: null, img: "https://i.ibb.co/C3ZvGFsd/Whats-App-Image-2026-01-31-at-12-56-14-PM.jpg" },
+    { id: 47, name: "Girls Embroidered Kurti", category: "Kids", price: 1400, oldPrice: 1800, img: "https://i.ibb.co/xtLT1fXV/Whats-App-Image-2026-01-31-at-12-56-14-PM-1.jpg" },
+    { id: 48, name: "Teens Kurta Pajama", category: "Kids", price: 2000, oldPrice: null, img: "https://i.ibb.co/1YMKSgC4/Whats-App-Image-2026-01-31-at-12-56-14-PM-2.jpg" },
+    { id: 49, name: "Kids Festive Sherwani", category: "Kids", price: 4500, oldPrice: 5500, img: "https://i.ibb.co/cXtWn8C9/Whats-App-Image-2026-01-31-at-12-56-15-PM.jpg" },
+    { id: 50, name: "Baby Girl Cotton Dress", category: "Kids", price: 1100, oldPrice: null, img: "https://i.ibb.co/hRsm32W4/Whats-App-Image-2026-01-31-at-12-56-15-PM-1.jpg" },
+  
+
+    // --- FANCY / PARTY WEAR COLLECTION (20 Items) ---
+    { id: 61, name: "Festive Wear", category: "Fancy", price: 25000, oldPrice: 30000, img: "https://i.ibb.co/xSWNs9j3/Whats-App-Image-2026-01-31-at-1-23-39-PM.jpg" },
+    { id: 62, name: "Party Wear Lehenga", category: "Fancy", price: 15000, oldPrice: null, img: "https://i.ibb.co/zVdb47C8/Whats-App-Image-2026-01-31-at-1-23-39-PM-1.jpg" },
+    { id: 63, name: "Gents Prince Coat", category: "Fancy", price: 12000, oldPrice: 15000, img: "https://i.ibb.co/n8MjXtdD/Whats-App-Image-2026-01-31-at-1-23-40-PM.jpg" },
+
+  
+];
+
+/* --- MANUAL PRODUCT DATA END --- */
+        let cart = [];
+
+        // --- NEW SLIDESHOW LOGIC ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function changeSlide() {
+            // Remove active class from current
+            slides[currentSlide].classList.remove('active');
+            
+            // Move to next slide (loop back to 0 if at end)
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            // Add active class to new slide
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Change slide every 4000ms (4 seconds)
+        setInterval(changeSlide, 4000);
+
+        // --- Notifications ---
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            const notif = document.createElement('div');
+            notif.classList.add('notification');
+            if(type === 'error') notif.classList.add('error');
+            else notif.classList.add('success');
+            const iconClass = type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check';
+            notif.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+            container.appendChild(notif);
+            setTimeout(() => { notif.classList.add('show'); }, 10);
+            setTimeout(() => { notif.classList.remove('show'); setTimeout(() => { notif.remove(); }, 300); }, 3000);
+        }
+
+        // --- UPDATED FILTER LOGIC (Now scrolls on all devices) ---
+        function displayProducts(filterCategory = 'all') {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; 
+            let hasProducts = false;
+            products.forEach(product => {
+                if (filterCategory === 'all' || product.category === filterCategory || (filterCategory === 'Discount' && product.oldPrice)) {
+                    hasProducts = true;
+                    let discountHTML = product.oldPrice ? `<span class="discount-tag">-${Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% OFF</span>` : '';
+                    const productCard = document.createElement('div');
+                    productCard.classList.add('product-card');
+                    productCard.innerHTML = `
+                        ${discountHTML}
+                        <div class="product-img-box"><img src="${product.img}" alt="${product.name}"></div>
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <div class="price-box">${product.oldPrice ? `<span class="old-price">Rs. ${product.oldPrice}</span>` : ''}<span class="price">Rs. ${product.price}</span></div>
+                            <button class="add-btn" onclick="addToCart(${product.id})"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+                        </div>`;
+                    productList.appendChild(productCard);
+                }
+            });
+            if(!hasProducts) productList.innerHTML = `<p style="text-align:center; grid-column: 1/-1;">No products found.</p>`;
+        }
+
+        function filterProducts(category, element) {
+            const titleMap = { 'all': 'All Collection', 'Men': "Men's Collection", 'Women': "Women's Collection", 'Kids': "Kids' Collection", 'Fancy': 'Fancy Collection', 'Discount': 'Discounted Items' };
+            document.getElementById('current-category-title').innerText = titleMap[category] || 'Collection';
+            
+            // Sidebar Active State Update
+            if(element) { 
+                document.querySelectorAll('.sidebar li').forEach(item => item.classList.remove('active-cat')); 
+                element.classList.add('active-cat'); 
+            }
+            
+            displayProducts(category);
+
+            // --- SCROLL FIX: NOW RUNS ON ALL DEVICES ---
+            // Purana code: if(window.innerWidth < 768) ...
+            // Naya code: Har device par scroll hoga
+            document.getElementById('products').scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartIcon();
+            showNotification(`${product.name} Added to Cart!`, 'success');
+        }
+
+        function updateCartIcon() { document.getElementById('cart-count').innerText = cart.length; }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            if(modal.style.display === 'block') renderCartItems();
+        }
+
+        function renderCartItems() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            const totalPriceSpan = document.getElementById('total-price');
+            cartItemsDiv.innerHTML = '';
+            let total = 0;
+            if(cart.length === 0) { cartItemsDiv.innerHTML = '<p style="text-align:center; color:#777;">Your cart is empty.</p>'; } else {
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    cartItemsDiv.innerHTML += `
+                        <div class="cart-item">
+                            <div style="flex:1;"><strong>${item.name}</strong><br><span style="font-size:0.85rem; color:#555;">Rs. ${item.price}</span></div>
+                            <i class="fa-solid fa-trash-can" style="color:#e74c3c; cursor:pointer;" onclick="removeFromCart(${index})"></i>
+                        </div>`;
+                });
+            }
+            totalPriceSpan.innerText = total;
+        }
+
+        function removeFromCart(index) { cart.splice(index, 1); renderCartItems(); updateCartIcon(); showNotification("Item removed", 'error'); }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) { showNotification("Cart is empty!", "error"); return; }
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+            if (!name || !phone || !address) { showNotification("Please fill all details", "error"); return; }
+            let orderText = `*New Order - Al-Rehman Fabrics*\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n---\nItems:\n`;
+            let total = 0;
+            cart.forEach(item => { orderText += `- ${item.name} (Rs. ${item.price})\n`; total += item.price; });
+            orderText += `---\nTotal: Rs. ${total}`;
+            const ownerNumber = "447466022069"; // APNA NUMBER YAHAN LIKHEIN
+            window.open(`https://wa.me/${ownerNumber}?text=${encodeURIComponent(orderText)}`, '_blank');
+            showSuccessModal();
+            cart = []; updateCartIcon(); document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function showSuccessModal() { document.getElementById('success-modal').style.display = 'flex'; }
+        function closeSuccessModal() { document.getElementById('success-modal').style.display = 'none'; }
+
+        window.onload = () => displayProducts('all');
+        /* --- JAVASCRIPT END --- */
+    </script>
+</body>
+</html>
